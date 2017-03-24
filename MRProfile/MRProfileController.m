@@ -311,7 +311,7 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 #pragma mark - User Action View
 
 @property (weak, nonatomic) IBOutlet UIView *userActionView;
-@property (weak, nonatomic) IBOutlet UIImage *userProfileImg;
+@property (weak, nonatomic) IBOutlet id userProfileImg;
 
 @property (weak, nonatomic) IBOutlet UIButton *userFollowButton;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *userActionHeight;
@@ -344,41 +344,13 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
     profileController.style = preferredStyle;
     profileController.name = name;
     profileController.userID = userID;
+    profileController.userProfileImg = image;
     profileController.modalPresentationStyle = UIModalPresentationOverCurrentContext;
     profileController.view.backgroundColor = [UIColor clearColor];
-    
-    if ([image isKindOfClass:[UIImage class]]) {
-        profileController.userProfileImg = image;
-    }
-    if ([image isKindOfClass:[NSString class]]) {
-        UIImageView * thumbnail = [[UIImageView alloc] init];
-        [thumbnail sd_setImageWithURL:[NSURL URLWithString:image] placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
-            if(image){
-                [thumbnail setImage:image];
-                profileController.userProfileImg =image;
-                profileController.userProfileImageView.image = image;
-                [profileController.userProfileImageView reloadInputViews];
-            }
-        }];
-    }
-    if ([image isKindOfClass:[NSURL class]]) {
-        UIImageView * thumbnail = [[UIImageView alloc] init];
-        [thumbnail sd_setImageWithURL:image placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
-            if(image){
-                [thumbnail setImage:image];
-                profileController.userProfileImg = image;
-                profileController.userProfileImageView.image = image;
-                [profileController.userProfileImageView reloadInputViews];
-            }
-        }];
-    }
-    if ([image isKindOfClass:[NSData class]]) {
-        profileController.userProfileImg  = [UIImage imageWithData:image];
-    }
     return profileController;
 }
 
-- (UIImage *)userProfileImage {
+- (id)userProfileImage {
     
     return self.userProfileImg;
 }
@@ -653,7 +625,35 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
         default:
             break;
     }
-    self.userProfileImageView.image = self.userProfileImage;
+    
+    if ([self.userProfileImage isKindOfClass:[UIImage class]]) {
+        self.userProfileImageView.image = self.userProfileImage;
+        [self.userProfileImageView reloadInputViews];
+
+    }
+    if ([self.userProfileImage isKindOfClass:[NSString class]]) {
+        UIImageView * thumbnail = [[UIImageView alloc] init];
+        [thumbnail sd_setImageWithURL:[NSURL URLWithString:self.userProfileImage] placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
+            if(image){
+                [thumbnail setImage:image];
+                self.userProfileImageView.image = image;
+                [self.userProfileImageView reloadInputViews];
+            }
+        }];
+    }
+    if ([self.userProfileImage isKindOfClass:[NSURL class]]) {
+        UIImageView * thumbnail = [[UIImageView alloc] init];
+        [thumbnail sd_setImageWithURL:self.userProfileImage placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
+            if(image){
+                [thumbnail setImage:image];
+                self.userProfileImageView.image = image;
+                [self.userProfileImageView reloadInputViews];
+            }
+        }];
+    }
+    if ([self.userProfileImage isKindOfClass:[NSData class]]) {
+        self.userProfileImageView.image   = [UIImage imageWithData:self.userProfileImage];
+    }
 }
 
 - (void)viewDidDisappear:(BOOL)animated {

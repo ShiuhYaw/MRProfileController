@@ -92,7 +92,7 @@ NS_CLASS_AVAILABLE_IOS(8_0) @interface MRProfileController : UIViewController
 
 @property (nullable, nonatomic, copy) NSString *name;
 @property (nullable, nonatomic, copy) NSString *userID;
-@property (nullable, nonatomic, copy) UIImage *userProfileImage;
+@property (nullable, nonatomic, copy) id userProfileImage;
 @property (nonatomic, readonly) MRProfileControllerStyle preferredStyle;
 
 @end
