@@ -8,6 +8,9 @@
 
 #import "ViewController.h"
 #import "MRProfileController.h"
+#import <SDWebImage/UIImageView+WebCache.h>
+#import <SDWebImage/UIImage+GIF.h>
+#import <SDWebImage/UIImage+MultiFormat.h>
 
 @interface ViewController ()
 
@@ -28,8 +31,14 @@
 
 - (IBAction)touchMeDidTapped:(UIButton *)sender {
     
-    MRProfileController *profileController = [MRProfileController profileWithName:@"Shiuh yaw" userID:@"1001010" imageURLString:@"" preferredStyle:MRProfileControllerStyleCenter];
-    MRProfileReport *report = [MRProfileReport reportWithImage:[UIImage imageNamed:@"ic_report"] handler:^(MRProfileReport * _Nonnull report) {
+    MRProfileController *profileController = [MRProfileController profileWithName:@"Shiuh yaw" userID:@"1001010" image:[NSURL URLWithString:@"https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/male/86.png"] preferredStyle:MRProfileControllerStyleBottom];
+    
+    MRProfileAction *okAction = [MRProfileAction actionWithTitle:@"Follow" selectedTitle:@"Following" handler:^(MRProfileAction * _Nonnull action) {
+        
+    }];
+    [profileController addAction:okAction];
+
+    MRProfileReport *report = [MRProfileReport reportWithImage:[UIImage imageNamed:@"ic_report"] handler:^() {
         NSLog(@"report %@", report);
     }];
     [profileController addReport:report];
@@ -47,7 +56,7 @@
     
     MRProfileTitle *viewweTitle = [MRProfileTitle profileWithTitle:@"" titleImage:[UIImage imageNamed:@"Newbie"] preferredStyle:MRProfileTitleStyleViewer];
     [profileController addTitle:viewweTitle];
-    
+
     [profileController addDiamondWithConfigurationHandler:^(UILabel * _Nonnull label) {
         label.text = @"123";
     }];

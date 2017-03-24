@@ -34,9 +34,10 @@ typedef NS_ENUM(NSInteger, MRProfileFollowStyle) {
 
 NS_CLASS_AVAILABLE_IOS(8_0) @interface MRProfileAction : NSObject <NSCopying>
 
-+ (instancetype)actionWithTitle:(nullable NSString *)title handler:(void (^ __nullable)(MRProfileAction *action))handler;
++ (instancetype)actionWithTitle:(nullable NSString *)title selectedTitle:(nullable NSString *)selectedTitle handler:(void (^ __nullable)(MRProfileAction *action))handler;
 
 @property (nullable, nonatomic, readonly) NSString *title;
+@property (nullable, nonatomic, readonly) NSString *selectedTitle;
 @property (nonatomic, getter=isEnabled) BOOL enabled;
 
 @end
@@ -61,7 +62,7 @@ NS_CLASS_AVAILABLE_IOS(8_0) @interface MRProfileTitle : NSObject <NSCopying>
 
 NS_CLASS_AVAILABLE_IOS(8_0) @interface MRProfileReport : NSObject <NSCopying>
 
-+ (instancetype)reportWithImage:(nullable UIImage *)image handler:(void (^ __nullable)(MRProfileReport *report))handler;
++ (instancetype)reportWithImage:(UIImage *)image handler:(void (^)(void))handler;
 
 @property (nullable, nonatomic, readonly) UIImage *image;
 @property (nonatomic, getter=isEnabled) BOOL enabled;
@@ -70,7 +71,7 @@ NS_CLASS_AVAILABLE_IOS(8_0) @interface MRProfileReport : NSObject <NSCopying>
 
 NS_CLASS_AVAILABLE_IOS(8_0) @interface MRProfileController : UIViewController
 
-+ (instancetype)profileWithName:(nullable NSString *)name userID:(nullable NSString *)userID imageURLString:(nullable NSString *)imageURLString preferredStyle:(MRProfileControllerStyle)preferredStyle;
++ (instancetype)profileWithName:(nullable NSString *)name userID:(nullable NSString *)userID image:(nullable id)image preferredStyle:(MRProfileControllerStyle)preferredStyle;
 
 - (void)addAction:(MRProfileAction *)action;
 @property (nonatomic, readonly) NSArray<MRProfileAction *> *actions;

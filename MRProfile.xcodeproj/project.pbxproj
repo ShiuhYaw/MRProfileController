@@ -21,6 +21,9 @@
 		9877BE251E84D4A500C550C6 /* MRProfileActionCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9877BE231E84D4A500C550C6 /* MRProfileActionCollectionViewCell.xib */; };
 		9877BE2B1E84D4D700C550C6 /* MRProfileTitleCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9877BE291E84D4D700C550C6 /* MRProfileTitleCollectionViewCell.m */; };
 		9877BE2C1E84D4D700C550C6 /* MRProfileTitleCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9877BE2A1E84D4D700C550C6 /* MRProfileTitleCollectionViewCell.xib */; };
+		9877BE311E84D8BA00C550C6 /* UIColor+Hex.m in Sources */ = {isa = PBXBuildFile; fileRef = 9877BE301E84D8BA00C550C6 /* UIColor+Hex.m */; };
+		9877BE341E850C4000C550C6 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 9877BE331E850C4000C550C6 /* Podfile */; };
+		F300E3EEEECDA9328E73AF2E /* libPods-MRProfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01842F41C8C767A980D485D5 /* libPods-MRProfile.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +44,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		01842F41C8C767A980D485D5 /* libPods-MRProfile.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MRProfile.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		26C768F0ABA027394C61CC42 /* Pods-MRProfile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MRProfile.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MRProfile/Pods-MRProfile.debug.xcconfig"; sourceTree = "<group>"; };
+		54AE98CDB7050B572C747426 /* Pods-MRProfile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MRProfile.release.xcconfig"; path = "Pods/Target Support Files/Pods-MRProfile/Pods-MRProfile.release.xcconfig"; sourceTree = "<group>"; };
 		983D5B771E8390D6008838ED /* MRProfile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MRProfile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		983D5B7B1E8390D6008838ED /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		983D5B7D1E8390D6008838ED /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -66,6 +72,9 @@
 		9877BE281E84D4D700C550C6 /* MRProfileTitleCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MRProfileTitleCollectionViewCell.h; sourceTree = "<group>"; };
 		9877BE291E84D4D700C550C6 /* MRProfileTitleCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MRProfileTitleCollectionViewCell.m; sourceTree = "<group>"; };
 		9877BE2A1E84D4D700C550C6 /* MRProfileTitleCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MRProfileTitleCollectionViewCell.xib; sourceTree = "<group>"; };
+		9877BE2F1E84D8BA00C550C6 /* UIColor+Hex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Hex.h"; sourceTree = "<group>"; };
+		9877BE301E84D8BA00C550C6 /* UIColor+Hex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Hex.m"; sourceTree = "<group>"; };
+		9877BE331E850C4000C550C6 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F300E3EEEECDA9328E73AF2E /* libPods-MRProfile.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,13 +103,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5CA627D8C75D89F0DF3D4435 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				01842F41C8C767A980D485D5 /* libPods-MRProfile.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		983D5B6E1E8390D6008838ED = {
 			isa = PBXGroup;
 			children = (
+				9877BE331E850C4000C550C6 /* Podfile */,
 				983D5B791E8390D6008838ED /* MRProfile */,
 				983D5B931E8390D6008838ED /* MRProfileTests */,
 				983D5B9E1E8390D6008838ED /* MRProfileUITests */,
 				983D5B781E8390D6008838ED /* Products */,
+				F1DB73DA848E83C9CFCB44CD /* Pods */,
+				5CA627D8C75D89F0DF3D4435 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -116,6 +137,7 @@
 		983D5B791E8390D6008838ED /* MRProfile */ = {
 			isa = PBXGroup;
 			children = (
+				9877BE321E84D8C000C550C6 /* UIColor+Hex */,
 				9877BE2E1E84D4F000C550C6 /* MRProfileController */,
 				9877BE2D1E84D4E000C550C6 /* MRProfileTitleCollectionViewCell */,
 				9877BE271E84D4BC00C550C6 /* MRProfileActionCollectionViewCell */,
@@ -188,6 +210,24 @@
 			name = MRProfileController;
 			sourceTree = "<group>";
 		};
+		9877BE321E84D8C000C550C6 /* UIColor+Hex */ = {
+			isa = PBXGroup;
+			children = (
+				9877BE2F1E84D8BA00C550C6 /* UIColor+Hex.h */,
+				9877BE301E84D8BA00C550C6 /* UIColor+Hex.m */,
+			);
+			name = "UIColor+Hex";
+			sourceTree = "<group>";
+		};
+		F1DB73DA848E83C9CFCB44CD /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				26C768F0ABA027394C61CC42 /* Pods-MRProfile.debug.xcconfig */,
+				54AE98CDB7050B572C747426 /* Pods-MRProfile.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -195,9 +235,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 983D5BA41E8390D6008838ED /* Build configuration list for PBXNativeTarget "MRProfile" */;
 			buildPhases = (
+				B4C056848AAFCCD5D7E41A7F /* [CP] Check Pods Manifest.lock */,
 				983D5B731E8390D6008838ED /* Sources */,
 				983D5B741E8390D6008838ED /* Frameworks */,
 				983D5B751E8390D6008838ED /* Resources */,
+				262157FBE42052AC593D84BF /* [CP] Embed Pods Frameworks */,
+				59CD8CFD23969F169399391F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -302,6 +345,7 @@
 				9877BE2C1E84D4D700C550C6 /* MRProfileTitleCollectionViewCell.xib in Resources */,
 				9877BE251E84D4A500C550C6 /* MRProfileActionCollectionViewCell.xib in Resources */,
 				983D5B871E8390D6008838ED /* Assets.xcassets in Resources */,
+				9877BE341E850C4000C550C6 /* Podfile in Resources */,
 				983D5B851E8390D6008838ED /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -322,6 +366,54 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		262157FBE42052AC593D84BF /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MRProfile/Pods-MRProfile-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		59CD8CFD23969F169399391F /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MRProfile/Pods-MRProfile-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B4C056848AAFCCD5D7E41A7F /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		983D5B731E8390D6008838ED /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -331,6 +423,7 @@
 				983D5BB01E8390ED008838ED /* MRProfileController.m in Sources */,
 				983D5B821E8390D6008838ED /* ViewController.m in Sources */,
 				983D5B7F1E8390D6008838ED /* AppDelegate.m in Sources */,
+				9877BE311E84D8BA00C550C6 /* UIColor+Hex.m in Sources */,
 				9877BE2B1E84D4D700C550C6 /* MRProfileTitleCollectionViewCell.m in Sources */,
 				983D5B7C1E8390D6008838ED /* main.m in Sources */,
 			);
@@ -479,8 +572,10 @@
 		};
 		983D5BA51E8390D6008838ED /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 26C768F0ABA027394C61CC42 /* Pods-MRProfile.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 6FE3NQT9SX;
 				INFOPLIST_FILE = MRProfile/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -491,8 +586,10 @@
 		};
 		983D5BA61E8390D6008838ED /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54AE98CDB7050B572C747426 /* Pods-MRProfile.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 6FE3NQT9SX;
 				INFOPLIST_FILE = MRProfile/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

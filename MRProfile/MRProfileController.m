@@ -7,6 +7,11 @@
 //
 
 #import "MRProfileController.h"
+#import "MRProfileTitleCollectionViewCell.h"
+#import "MRProfileActionCollectionViewCell.h"
+#import <SDWebImage/UIImageView+WebCache.h>
+#import <SDWebImage/UIImage+GIF.h>
+#import <SDWebImage/UIImage+MultiFormat.h>
 
 #pragma mark -
 #pragma mark - MRProfileAction Class Implementation
@@ -15,6 +20,7 @@ typedef void (^Handler)(MRProfileAction *action);
 
 @interface MRProfileAction()
 
+@property (strong, nonatomic) NSString *selectedTitleString;
 @property (strong, nonatomic) NSString *titleString;
 @property (nonatomic, copy, nullable) Handler handler;
 
@@ -22,10 +28,11 @@ typedef void (^Handler)(MRProfileAction *action);
 
 @implementation MRProfileAction
 
-+ (instancetype)actionWithTitle:(nullable NSString *)title handler:(void (^ __nullable)(MRProfileAction *action))handler {
++ (instancetype)actionWithTitle:(nullable NSString *)title selectedTitle:(nullable NSString *)selectedTitle handler:(void (^ __nullable)(MRProfileAction *action))handler {
     
     MRProfileAction *profileAction = [[MRProfileAction alloc] init];
     profileAction.titleString = title;
+    profileAction.selectedTitleString = selectedTitle;
     profileAction.handler = handler;
     return profileAction;
 }
@@ -34,8 +41,14 @@ typedef void (^Handler)(MRProfileAction *action);
     
     MRProfileAction *profileAction = [[[self class] allocWithZone:zone] init];
     profileAction.titleString = self.titleString;
+    profileAction.selectedTitleString = self.selectedTitleString;
     profileAction.handler = self.handler;
     return profileAction;
+}
+
+- (NSString *)selectedTitle {
+    
+    return self.selectedTitleString;
 }
 
 - (NSString *)title {
@@ -163,19 +176,22 @@ typedef void (^Handler)(MRProfileAction *action);
 
 #pragma mark -
 #pragma mark - MRProfileReport Class Implementation
+typedef void (^ReportHandler)(void);
 
 @interface MRProfileReport()
 
 @property (strong, nonatomic) UIImage *reportImage;
+@property (nonatomic, copy, nullable) ReportHandler reportHandler;
 
 @end
 
 @implementation MRProfileReport
 
-+ (instancetype)reportWithImage:(UIImage *)image handler:(void (^)(MRProfileReport * _Nonnull))handler {
++ (instancetype)reportWithImage:(UIImage *)image handler:(void (^)(void))handler {
     
     MRProfileReport *report = [[MRProfileReport alloc]init];
     report.reportImage = image;
+    report.reportHandler = handler;
     return report;
 }
 
@@ -295,6 +311,8 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 #pragma mark - User Action View
 
 @property (weak, nonatomic) IBOutlet UIView *userActionView;
+@property (weak, nonatomic) IBOutlet UIImage *userProfileImg;
+
 @property (weak, nonatomic) IBOutlet UIButton *userFollowButton;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *userActionHeight;
 @property (weak, nonatomic) IBOutlet UICollectionView *actionCollectionView;
@@ -320,15 +338,49 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 @synthesize titles;
 @synthesize report;
 
-+ (instancetype)profileWithName:(nullable NSString *)name userID:(nullable NSString *)userID imageURLString:(nullable NSString *)imageURLString preferredStyle:(MRProfileControllerStyle)preferredStyle {
-    
++ (instancetype)profileWithName:(nullable NSString *)name userID:(nullable NSString *)userID image:(nullable id)image preferredStyle:(MRProfileControllerStyle)preferredStyle {
+
     MRProfileController *profileController = [[MRProfileController alloc]initWithNibName:NSStringFromClass([MRProfileController class]) bundle:[NSBundle mainBundle]];
     profileController.style = preferredStyle;
     profileController.name = name;
     profileController.userID = userID;
     profileController.modalPresentationStyle = UIModalPresentationOverCurrentContext;
     profileController.view.backgroundColor = [UIColor clearColor];
+    
+    if ([image isKindOfClass:[UIImage class]]) {
+        profileController.userProfileImg = image;
+    }
+    if ([image isKindOfClass:[NSString class]]) {
+        UIImageView * thumbnail = [[UIImageView alloc] init];
+        [thumbnail sd_setImageWithURL:[NSURL URLWithString:image] placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
+            if(image){
+                [thumbnail setImage:image];
+                profileController.userProfileImg =image;
+                profileController.userProfileImageView.image = image;
+                [profileController.userProfileImageView reloadInputViews];
+            }
+        }];
+    }
+    if ([image isKindOfClass:[NSURL class]]) {
+        UIImageView * thumbnail = [[UIImageView alloc] init];
+        [thumbnail sd_setImageWithURL:image placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
+            if(image){
+                [thumbnail setImage:image];
+                profileController.userProfileImg = image;
+                profileController.userProfileImageView.image = image;
+                [profileController.userProfileImageView reloadInputViews];
+            }
+        }];
+    }
+    if ([image isKindOfClass:[NSData class]]) {
+        profileController.userProfileImg  = [UIImage imageWithData:image];
+    }
     return profileController;
+}
+
+- (UIImage *)userProfileImage {
+    
+    return self.userProfileImg;
 }
 
 - (void)addAction:(MRProfileAction *)action {
@@ -467,7 +519,9 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
     [[self.userProfileImageView layer]setCornerRadius:self.userProfileImageView.bounds.size.height/2];
     [[self.firstSeparateView layer]setCornerRadius:self.firstSeparateView.bounds.size.height/2];
     [[self.secondSeparateView layer]setCornerRadius:self.secondSeparateView.bounds.size.height/2];
-
+    
+    [self.actionCollectionView registerNib:[UINib nibWithNibName:NSStringFromClass([MRProfileActionCollectionViewCell class]) bundle:[NSBundle mainBundle]] forCellWithReuseIdentifier:NSStringFromClass([MRProfileActionCollectionViewCell class])];
+    [self.titleCollectionView registerNib:[UINib nibWithNibName:NSStringFromClass([MRProfileTitleCollectionViewCell class]) bundle:[NSBundle mainBundle]] forCellWithReuseIdentifier:NSStringFromClass([MRProfileTitleCollectionViewCell class])];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -512,6 +566,8 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
     self.reportView.hidden = true;
     if (self.currentReport) {
         self.reportView.hidden = false;
+        [self.reportButton setImage:[UIImage imageNamed:@"ic_report"] forState:UIControlStateNormal];
+        [self.reportButton setImage:[UIImage imageNamed:@"ic_report_pressed"] forState:UIControlStateHighlighted];
     }
     
     if (!self.mutableFollows || self.mutableFollows.count < 1) {
@@ -558,6 +614,10 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
         self.userFollowTopUserTitle.priority = UILayoutPriorityDefaultLow;
         self.userFollowTopUserID.priority = UILayoutPriorityDefaultHigh;
     }
+    else {
+        
+        [self.titleCollectionView reloadData];
+    }
     
     for (MRProfileTitle *title in self.mutableTitles) {
         
@@ -572,6 +632,14 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
                 break;
         }
     }
+    
+    if (!self.mutableActions || self.mutableActions.count < 1) {
+        
+    }
+    else {
+        
+        [self.actionCollectionView reloadData];
+    }
     switch (self.preferredStyle) {
         case MRProfileControllerStyleNone:
             self.profileCardView.layer.cornerRadius = 0;
@@ -585,6 +653,7 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
         default:
             break;
     }
+    self.userProfileImageView.image = self.userProfileImage;
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
@@ -613,6 +682,19 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
     }
 }
 
+- (IBAction)reportButtonDidTapped:(UIButton *)sender {
+    
+    if (self.currentReport) {
+        self.currentReport.reportHandler();
+    }
+}
+
+- (IBAction)dismissButtonDidTapped:(UIButton *)sender {
+    
+    [self dismissViewControllerAnimated:self completion:^{
+        
+    }];
+}
 #pragma mark - UICollectionViewDelegate
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -639,6 +721,7 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
             self.userFollowTopUserID.priority = UILayoutPriorityDefaultHigh;
             return @(0).integerValue;
         }
+        return self.mutableTitles.count;
     }
     if (!self.mutableActions) {
         
@@ -649,42 +732,29 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 }
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     
-    if ([collectionView isEqual:self.!self.mutableActions]) {
-        MRAlertCustomCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"MRAlertCustomCollectionViewCell" forIndexPath:indexPath];
-        cell.titleString = self.mutableItems[indexPath.row].title;
-        cell.rewardTitleString = self.mutableItems[indexPath.row].value;
-        cell.titleImage = self.mutableItems[indexPath.row].titleImage;
-        
-        switch (self.mutableItems[indexPath.row].style) {
-            case MRAlertValueStyleCoin:
-                cell.rewardImage = [UIImage imageNamed:@"icRewardsCoins"];
-                break;
-            case MRAlertValueStyleDiamond:
-                cell.rewardImage = [UIImage imageNamed:@"icRewardsDiamond"];
-                break;
-            default:
-                if (self.mutableItems[indexPath.row].valueImage) {
-                    cell.rewardImage = self.mutableItems[indexPath.row].valueImage;
-                }
-                break;
-        }
-        cell.tag = indexPath.row;
+    if ([collectionView isEqual:self.titleCollectionView]) {
+        MRProfileTitleCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:NSStringFromClass([MRProfileTitleCollectionViewCell class]) forIndexPath:indexPath];
+        cell.imageView.image = self.mutableTitles[indexPath.row].image;
         return cell;
     }
     
-    MRAlertActionCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"MRAlertActionCollectionViewCell" forIndexPath:indexPath];
-    
-    __weak __typeof(self)weakSelf = self;
-    cell.selectHandler = ^(UICollectionViewCell * _Nonnull cell) {
+    MRProfileActionCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:NSStringFromClass([MRProfileActionCollectionViewCell class]) forIndexPath:indexPath];
+    cell.buttonWidth.priority = UILayoutPriorityDefaultHigh;
+    cell.lowButtonWidth.priority = UILayoutPriorityDefaultLow;
+
+    NSUInteger rows = self.mutableActions.count;
+    if (rows == 2) {
+        cell.buttonWidth.priority = UILayoutPriorityDefaultLow;
+        cell.lowButtonWidth.priority = UILayoutPriorityDefaultHigh;
+    }
+    cell.actionSelectHandler = ^(UICollectionViewCell * _Nonnull cell) {
         
-        MRAlertAction *alertAction = self.mutableActions[cell.tag];
+        MRProfileAction *alertAction = self.mutableActions[cell.tag];
         alertAction.handler(alertAction);
-        [weakSelf dismissViewControllerAnimated:false completion:^{
-            
-        }];
     };
     cell.tag = indexPath.row;
-    cell.titleString = self.mutableActions[indexPath.row].title;
+    cell.title = self.mutableActions[indexPath.row].title;
+    cell.selectedTitle = self.mutableActions[indexPath.row].selectedTitle;
     return cell;
 }
 
@@ -693,66 +763,64 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     
     
-    if ([collectionView isEqual:self.customCollectionView]) {
+    if ([collectionView isEqual:self.titleCollectionView]) {
         
-        CGRect rect = self.customView.bounds;
-        CGFloat width = rect.size.width;
-        NSUInteger rows = self.mutableItems.count;
-        self.alertCustomCollectionViewHeightConstraint.constant = (CUSTOM_COLLECTION_HEIGHT.floatValue * (rows)) + (CUSTOM_COLLECTION_SPACING.floatValue * (rows - 1));
-        return CGSizeMake(width, CUSTOM_COLLECTION_HEIGHT.floatValue);
+        NSUInteger rows = self.mutableTitles.count;
+        if (rows < 2) {
+            
+            self.userTitleHeight.constant = 42;
+        }
+        if (rows == 2) {
+            
+            self.userTitleHeight.constant = (42) ;
+        }
+        if (rows > 2) {
+            
+            if (rows%2) {
+                self.userTitleHeight.constant = ((42 * rows/2) + 42);
+            }
+            else {
+                self.userTitleHeight.constant = (42 * rows/2) ;
+            }
+        }
+        return CGSizeMake(66, 42);
     }
     CGRect rect = collectionView.bounds;
     CGFloat width = rect.size.width;
     NSUInteger rows = self.mutableActions.count;
     if (rows < 2) {
         
-        self.alertActionCollectionViewHeightConstraint.constant = COLLECTION_HEIGHT.floatValue;
-        return CGSizeMake(width, COLLECTION_HEIGHT.floatValue);
+        self.userActionHeight.constant = 78;
+        return CGSizeMake(width, 78);
+    }
+    if (rows == 2) {
+        
+        self.userActionHeight.constant = (78) ;
+        return CGSizeMake(width / 2, 78);
     }
     if (rows > 2) {
         
-        self.alertActionCollectionViewHeightConstraint.constant = (COLLECTION_HEIGHT.floatValue * rows) + COLLECTION_HEIGHT.floatValue ;
-        return CGSizeMake(width, COLLECTION_HEIGHT.floatValue);
+        self.userActionHeight.constant = (78 * rows) ;
+        return CGSizeMake(width, 78);
     }
-    if (rows < 3) {
-        
-        self.alertActionCollectionViewHeightConstraint.constant = COLLECTION_HEIGHT.floatValue;
-        return CGSizeMake((width/2) - COLLECTION_SPACING.floatValue, COLLECTION_HEIGHT.floatValue);
-    }
-    return CGSizeMake(width, COLLECTION_HEIGHT.floatValue);
+    
+    return CGSizeZero;
 }
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
     
-    return UIEdgeInsetsZero;
+    return UIEdgeInsetsMake(0, 0, 0, 0);
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
     
-    if ([collectionView isEqual:self.customCollectionView]) {
-        if IS_IPHONE_5 {
-            return CUSTOM_COLLECTION_SPACING.floatValue / 4;
-        }
-        return CUSTOM_COLLECTION_SPACING.floatValue;
-    }
-    return COLLECTION_SPACING .floatValue;
+    return 0.0;
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
     
-    if ([collectionView isEqual:self.customCollectionView]) {
-        return CUSTOM_COLLECTION_SPACING.floatValue * 2;
-    }
-    return COLLECTION_SPACING.floatValue ;
+    return 0.0 ;
 }
-
-/*
-btn.frame = CGRectMake(btn.frame.origin.x, btn.frame.origin.y, 240, 42);
-[btn setBackgroundImage:[[UIImage imageNamed:@"bt_new_normal"]resizableImageWithCapInsets:UIEdgeInsetsMake(0.0, 36.0f, 0.0, 36.0f) resizingMode:UIImageResizingModeStretch] forState:UIControlStateNormal];
-[btn setBackgroundImage:[[UIImage imageNamed:@"bt_new_pressed"]resizableImageWithCapInsets:UIEdgeInsetsMake(0.0, 20.0f, 0.0, 20.0f) resizingMode:UIImageResizingModeStretch] forState:UIControlStateHighlighted];
-[btn setTitleColor:[self setColorStyle:@"t5"] forState:UIControlStateNormal];
-btn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:14];
-*/
 
 - (void)dealloc {
     
