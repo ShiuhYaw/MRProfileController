@@ -14,7 +14,7 @@
 @interface MRProfileTitleCollectionViewCell()
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicatorView;
-@property (strong, nonatomic) IBOutlet UIImageView *imageView;
+@property (weak, nonatomic) IBOutlet UIImageView *imageView;
 @end
 
 @implementation MRProfileTitleCollectionViewCell
@@ -23,7 +23,7 @@
     
     [super awakeFromNib];
     self.activityIndicatorView.hidesWhenStopped = YES;
-    [self.activityIndicatorView startAnimating];
+    [self.activityIndicatorView stopAnimating];
     // Initialization code
 }
 
@@ -42,25 +42,24 @@
     }
     if ([image isKindOfClass:[NSString class]]) {
         
-        UIImageView * thumbnail = [[UIImageView alloc] init];
-        [thumbnail sd_setImageWithURL:[NSURL URLWithString:image] placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
+        __weak typeof(self) weak = self;
+        [[[UIImageView alloc] init] sd_setImageWithURL:[NSURL URLWithString:image] placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
             if(image){
-                [thumbnail setImage:image];
-                self.imageView.image = image;
-                [self.imageView reloadInputViews];
-                [self.activityIndicatorView stopAnimating];
+                weak.imageView.image = image;
+                [weak.imageView reloadInputViews];
+                [weak.activityIndicatorView stopAnimating];
             }
         }];
     }
+    
     if ([image isKindOfClass:[NSURL class]]) {
         
-        UIImageView * thumbnail = [[UIImageView alloc] init];
-        [thumbnail sd_setImageWithURL:image placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
+        __weak typeof(self) weak = self;
+        [[[UIImageView alloc] init] sd_setImageWithURL:image placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
             if(image){
-                [thumbnail setImage:image];
-                self.imageView.image = image;
-                [self.imageView reloadInputViews];
-                [self.activityIndicatorView stopAnimating];
+                weak.imageView.image = image;
+                [weak.imageView reloadInputViews];
+                [weak.activityIndicatorView stopAnimating];
             }
         }];
     }
@@ -73,9 +72,9 @@
 
 - (void)dealloc {
     
-    if (self.imageView) {
+    if (self.image) {
         
-        self.imageView = nil;
+        self.image = nil;
     }
 }
 

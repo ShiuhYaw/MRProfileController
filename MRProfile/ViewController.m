@@ -32,9 +32,10 @@
 - (IBAction)touchMeDidTapped:(UIButton *)sender {
     
     MRProfileController *profileController = [MRProfileController profileWithName:@"Shiuh yaw" userID:@"1001010" image:[NSURL URLWithString:@"https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/male/86.png"] preferredStyle:MRProfileControllerStyleBottom];
-    
+
     MRProfileAction *okAction = [MRProfileAction actionWithTitle:@"Follow" selectedTitle:@"Following" handler:^(MRProfileAction * _Nonnull action) {
         
+        NSLog(@"action: %@", action);
     }];
     [profileController addAction:okAction];
 
@@ -60,7 +61,6 @@
     [profileController addDiamondWithConfigurationHandler:^(UILabel * _Nonnull label) {
         label.text = @"123";
     }];
-
     [profileController addVIPWithConfigurationHandler:^(UIImageView * _Nonnull imageView) {
         imageView.image = [UIImage imageNamed:@"icn_vip2"];
     }];
@@ -73,6 +73,10 @@
     [self presentViewController:profileController animated:true completion:^{
         
     }];
+}
+
+- (IBAction)relese:(id)sender {
+    
 }
 
 @end

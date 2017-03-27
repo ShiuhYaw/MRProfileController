@@ -33,17 +33,18 @@ typedef void (^Handler)(MRProfileAction *action);
     MRProfileAction *profileAction = [[MRProfileAction alloc] init];
     profileAction.titleString = title;
     profileAction.selectedTitleString = selectedTitle;
-    profileAction.handler = handler;
+    profileAction.enabled = YES;
     return profileAction;
 }
 
-- (id)copyWithZone:(nullable NSZone *)zone {
+- (BOOL)isEnabled {
     
-    MRProfileAction *profileAction = [[[self class] allocWithZone:zone] init];
-    profileAction.titleString = self.titleString;
-    profileAction.selectedTitleString = self.selectedTitleString;
-    profileAction.handler = self.handler;
-    return profileAction;
+    return YES;
+}
+
+- (BOOL)isSelected {
+    
+    return NO;
 }
 
 - (NSString *)selectedTitle {
@@ -56,14 +57,19 @@ typedef void (^Handler)(MRProfileAction *action);
     return self.titleString;
 }
 
-- (void)triggerHandler {
+- (id)copyWithZone:(nullable NSZone *)zone {
     
-    self.handler(self);
+    MRProfileAction *profileAction = [[[self class] allocWithZone:zone] init];
+    profileAction.titleString = self.titleString;
+    profileAction.selectedTitleString = self.selectedTitleString;
+    profileAction.handler = self.handler;
+    return profileAction;
 }
 
 - (void)dealloc {
     
     self.titleString = nil;
+    self.selectedTitleString = nil;
 }
 @end
 
@@ -226,6 +232,7 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 @interface MRProfileController () <UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 #pragma mark - User Profile View
 
+@property (strong, nonatomic) id userProfileImg;
 @property (weak, nonatomic) IBOutlet UIView *userProfileView;
 @property (weak, nonatomic) IBOutlet UIImageView *userProfileImageView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *userProfileActivityIndicatorView;
@@ -252,7 +259,6 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 #pragma mark - Report View
 
 @property (weak, nonatomic) IBOutlet UIView *reportView;
-@property (weak, nonatomic) IBOutlet UIImageView *reportImageView;
 @property (weak, nonatomic) IBOutlet UIButton *reportButton;
 
 #pragma mark - User Status View
@@ -286,8 +292,6 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 
 @property (weak, nonatomic) IBOutlet UIView *userTitleView;
 @property (weak, nonatomic) IBOutlet UICollectionView *titleCollectionView;
-@property (weak, nonatomic) IBOutlet UIImageView *userBroadcastTitleImageView;
-@property (weak, nonatomic) IBOutlet UIImageView *userViewerTitleImageView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *userTitleTopUserID;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *userTitleHeight;
 
@@ -313,17 +317,16 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 #pragma mark - User Action View
 
 @property (weak, nonatomic) IBOutlet UIView *userActionView;
-@property (strong, nonatomic) IBOutlet id userProfileImg;
-
 @property (weak, nonatomic) IBOutlet UIButton *userFollowButton;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *userActionHeight;
 @property (weak, nonatomic) IBOutlet UICollectionView *actionCollectionView;
-
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *actionActivityIndicatorView;
 @property (strong, nonatomic) NSMutableArray<MRProfileAction *> *mutableActions;
 @property (strong, nonatomic) NSMutableArray<MRProfileTitle *> *mutableTitles;
 @property (strong, nonatomic) NSMutableArray<MRProfileFollow *> *mutableFollows;
 @property (strong, nonatomic) MRProfileReport *currentReport;
 @property (assign, nonatomic) MRProfileControllerStyle style;
+@property (assign, nonatomic) BOOL dismissed;
 @property (nonatomic, copy, nullable) DiamondConfigurationHandler diamondConfigurationHandler;
 @property (nonatomic, copy, nullable) VIPConfigurationHandler vipConfigurationHandler;
 @property (nonatomic, copy, nullable) GoldCertConfigurationHandler goldCertConfigurationHandler;
@@ -343,6 +346,7 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 + (instancetype)profileWithName:(nullable NSString *)name userID:(nullable NSString *)userID image:(nullable id)image preferredStyle:(MRProfileControllerStyle)preferredStyle {
 
     MRProfileController *profileController = [[MRProfileController alloc]initWithNibName:NSStringFromClass([MRProfileController class]) bundle:[NSBundle mainBundle]];
+    profileController.dismissed = NO;
     profileController.style = preferredStyle;
     profileController.name = name;
     profileController.userID = userID;
@@ -441,6 +445,11 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
     }
 }
 
+- (BOOL)isDismissed {
+    
+    return self.dismissed;
+}
+
 - (MRProfileControllerStyle)preferredStyle {
     
     return self.style;
@@ -490,6 +499,9 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
     self.userIDLabel.text = [NSString stringWithFormat:@"User ID: %@", self.userID];
     self.userProfileActivityIndicatorView.hidesWhenStopped = YES;
     [self.userProfileActivityIndicatorView startAnimating];
+    self.actionActivityIndicatorView.hidesWhenStopped = YES;
+    [self.actionActivityIndicatorView startAnimating];
+
     [[self.userProfileView layer]setCornerRadius:self.userProfileView.bounds.size.height/2];
     [[self.userProfileImageView layer]setCornerRadius:self.userProfileImageView.bounds.size.height/2];
     [[self.firstSeparateView layer]setCornerRadius:self.firstSeparateView.bounds.size.height/2];
@@ -594,25 +606,9 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
         [self.titleCollectionView reloadData];
     }
     
-    for (MRProfileTitle *title in self.mutableTitles) {
+    if (self.mutableActions || self.mutableActions.count > 0) {
         
-        switch (title.style) {
-            case MRProfileTitleStyleViewer:
-                self.userViewerTitleImageView.image = title.titleImage;
-                break;
-            case MRProfileTitleStyleBroadcaster:
-                self.userBroadcastTitleImageView.image = title.titleImage;
-                break;
-            default:
-                break;
-        }
-    }
-    
-    if (!self.mutableActions || self.mutableActions.count < 1) {
-        
-    }
-    else {
-        
+        [self.actionActivityIndicatorView stopAnimating];
         [self.actionCollectionView reloadData];
     }
     switch (self.preferredStyle) {
@@ -636,24 +632,22 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 
     }
     if ([self.userProfileImage isKindOfClass:[NSString class]]) {
-        UIImageView * thumbnail = [[UIImageView alloc] init];
-        [thumbnail sd_setImageWithURL:[NSURL URLWithString:self.userProfileImage] placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
+        __weak typeof(self) weak = self;
+        [[[UIImageView alloc] init] sd_setImageWithURL:[NSURL URLWithString:self.userProfileImage] placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
             if(image){
-                [thumbnail setImage:image];
-                self.userProfileImageView.image = image;
-                [self.userProfileImageView reloadInputViews];
-                [self.userProfileActivityIndicatorView stopAnimating];
+                weak.userProfileImageView.image = image;
+                [weak.userProfileImageView reloadInputViews];
+                [weak.userProfileActivityIndicatorView stopAnimating];
             }
         }];
     }
     if ([self.userProfileImage isKindOfClass:[NSURL class]]) {
-        UIImageView * thumbnail = [[UIImageView alloc] init];
-        [thumbnail sd_setImageWithURL:self.userProfileImage placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
+        __weak typeof(self) weak = self;
+        [[[UIImageView alloc] init] sd_setImageWithURL:self.userProfileImage placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
             if(image){
-                [thumbnail setImage:image];
-                self.userProfileImageView.image = image;
-                [self.userProfileImageView reloadInputViews];
-                [self.userProfileActivityIndicatorView stopAnimating];
+                weak.userProfileImageView.image = image;
+                [weak.userProfileImageView reloadInputViews];
+                [weak.userProfileActivityIndicatorView stopAnimating];
             }
         }];
     }
@@ -666,27 +660,6 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 - (void)viewDidDisappear:(BOOL)animated {
     
     [super viewDidDisappear:animated];
-    if (self.mutableActions) {
-        if (self.mutableActions.count > 0) {
-            [self.mutableActions removeAllObjects];
-        }
-        self.mutableActions = nil;
-    }
-    if (self.mutableTitles || self.mutableTitles.count > 0) {
-        if (self.mutableTitles.count > 0) {
-            [self.mutableTitles removeAllObjects];
-        }
-        self.mutableTitles = nil;
-    }
-    if (self.mutableFollows) {
-        if (self.mutableFollows.count > 0) {
-            [self.mutableFollows removeAllObjects];
-        }
-        self.mutableFollows = nil;
-    }
-    if (self.currentReport) {
-        self.currentReport = nil;
-    }
 }
 
 - (IBAction)reportButtonDidTapped:(UIButton *)sender {
@@ -698,8 +671,10 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 
 - (IBAction)dismissButtonDidTapped:(UIButton *)sender {
     
-    [self dismissViewControllerAnimated:self completion:^{
+    self.dismissed = YES;
+    [self dismissViewControllerAnimated:true completion:^{
         
+        NSLog(@"dismissed");
     }];
 }
 #pragma mark - UICollectionViewDelegate
@@ -708,7 +683,6 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
     
     [collectionView deselectItemAtIndexPath:indexPath animated:false];
 }
-
 
 #pragma mark - UICollectionViewDataSource
 
@@ -751,17 +725,20 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 
     NSUInteger rows = self.mutableActions.count;
     if (rows == 2) {
+        
         cell.buttonWidth.priority = UILayoutPriorityDefaultLow;
         cell.lowButtonWidth.priority = UILayoutPriorityDefaultHigh;
     }
+    __weak typeof(self) weak = self;
     cell.actionSelectHandler = ^(UICollectionViewCell * _Nonnull cell) {
         
-        MRProfileAction *alertAction = self.mutableActions[cell.tag];
+        MRProfileAction *alertAction = weak.mutableActions[cell.tag];
         alertAction.handler(alertAction);
     };
     cell.tag = indexPath.row;
     cell.title = self.mutableActions[indexPath.row].title;
     cell.selectedTitle = self.mutableActions[indexPath.row].selectedTitle;
+    cell.actionButton.enabled = self.mutableActions[indexPath.row].isEnabled;
     return cell;
 }
 
@@ -854,6 +831,18 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
     }
     if (self.userProfileImg) {
         self.userProfileImg = nil;
+    }
+    if (self.diamondConfigurationHandler) {
+        self.diamondConfigurationHandler = nil;
+    }
+    if (self.vipConfigurationHandler) {
+        self.vipConfigurationHandler = nil;
+    }
+    if (self.goldCertConfigurationHandler) {
+        self.goldCertConfigurationHandler = nil;
+    }
+    if (self.certConfigurationHandler) {
+        self.certConfigurationHandler = nil;
     }
 }
 

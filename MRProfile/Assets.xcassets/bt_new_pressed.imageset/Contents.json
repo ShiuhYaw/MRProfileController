@@ -5,11 +5,39 @@
       "scale" : "1x"
     },
     {
+      "resizing" : {
+        "mode" : "9-part",
+        "center" : {
+          "mode" : "tile",
+          "width" : 1,
+          "height" : 1
+        },
+        "cap-insets" : {
+          "bottom" : 42,
+          "top" : 41,
+          "right" : 42,
+          "left" : 41
+        }
+      },
       "idiom" : "universal",
       "filename" : "bt_new_pressed@2x.png",
       "scale" : "2x"
     },
     {
+      "resizing" : {
+        "mode" : "9-part",
+        "center" : {
+          "mode" : "tile",
+          "width" : 1,
+          "height" : 1
+        },
+        "cap-insets" : {
+          "bottom" : 63,
+          "top" : 62,
+          "right" : 62,
+          "left" : 62
+        }
+      },
       "idiom" : "universal",
       "filename" : "bt_new_pressed@3x.png",
       "scale" : "3x"
