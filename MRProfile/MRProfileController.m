@@ -8,7 +8,6 @@
 
 #import "MRProfileController.h"
 #import "MRProfileTitleCollectionViewCell.h"
-#import "MRProfileActionCollectionViewCell.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <SDWebImage/UIImage+GIF.h>
 #import <SDWebImage/UIImage+MultiFormat.h>
@@ -34,17 +33,32 @@ typedef void (^Handler)(MRProfileAction *action);
     profileAction.titleString = title;
     profileAction.selectedTitleString = selectedTitle;
     profileAction.enabled = YES;
+    profileAction.handler = handler;
     return profileAction;
 }
 
 - (BOOL)isEnabled {
     
-    return YES;
+    if (self.cell) {
+        return NO;
+    }
+    return self.cell.actionButton.isEnabled;
 }
 
 - (BOOL)isSelected {
     
-    return NO;
+    if (self.cell) {
+        return NO;
+    }
+    return self.cell.actionButton.selected;
+}
+
+- (void)setSelected:(BOOL)selected {
+    
+    if (self.cell) {
+        return;
+    }
+    [self.cell updateActionButton:selected];
 }
 
 - (NSString *)selectedTitle {
@@ -228,6 +242,7 @@ typedef void (^DiamondConfigurationHandler)(UILabel *diamondLabel);
 typedef void (^VIPConfigurationHandler)(UIImageView *vipImage);
 typedef void (^GoldCertConfigurationHandler)(UIImageView *vipImage);
 typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
+typedef void (^DismissHandler)(BOOL isDismissedWithAction);
 
 @interface MRProfileController () <UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 #pragma mark - User Profile View
@@ -331,6 +346,8 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 @property (nonatomic, copy, nullable) VIPConfigurationHandler vipConfigurationHandler;
 @property (nonatomic, copy, nullable) GoldCertConfigurationHandler goldCertConfigurationHandler;
 @property (nonatomic, copy, nullable) CertConfigurationHandler certConfigurationHandler;
+@property (nonatomic, copy, nullable) DismissHandler dismissHandler;
+
 @end
 
 @implementation MRProfileController
@@ -343,7 +360,7 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 @synthesize titles;
 @synthesize report;
 
-+ (instancetype)profileWithName:(nullable NSString *)name userID:(nullable NSString *)userID image:(nullable id)image preferredStyle:(MRProfileControllerStyle)preferredStyle {
++ (instancetype)profileWithName:(nullable NSString *)name userID:(nullable NSString *)userID image:(nullable id)image preferredStyle:(MRProfileControllerStyle)preferredStyle dismissHandler:(void(^ __nullable)(BOOL isDismissedWithAction))dismissHander {
 
     MRProfileController *profileController = [[MRProfileController alloc]initWithNibName:NSStringFromClass([MRProfileController class]) bundle:[NSBundle mainBundle]];
     profileController.dismissed = NO;
@@ -351,6 +368,7 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
     profileController.name = name;
     profileController.userID = userID;
     profileController.userProfileImg = image;
+    profileController.dismissHandler = dismissHander;
     profileController.modalPresentationStyle = UIModalPresentationOverCurrentContext;
     profileController.view.backgroundColor = [UIColor clearColor];
     return profileController;
@@ -669,6 +687,9 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 - (IBAction)dismissButtonDidTapped:(UIButton *)sender {
     
     self.dismissed = YES;
+    if (self.dismissHandler) {
+        self.dismissHandler(NO);
+    }
     [self dismissViewControllerAnimated:true completion:^{
         
         NSLog(@"dismissed");
@@ -730,12 +751,16 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
     cell.actionSelectHandler = ^(UICollectionViewCell * _Nonnull cell) {
         
         MRProfileAction *alertAction = weak.mutableActions[cell.tag];
-        alertAction.handler(alertAction);
+        if (alertAction.handler) {
+            alertAction.handler(alertAction);
+        }
     };
+    MRProfileAction *action = self.mutableActions[indexPath.row];
+    action.cell = cell;
     cell.tag = indexPath.row;
-    cell.title = self.mutableActions[indexPath.row].title;
-    cell.selectedTitle = self.mutableActions[indexPath.row].selectedTitle;
-    cell.actionButton.enabled = self.mutableActions[indexPath.row].isEnabled;
+    cell.title = action.title;
+    cell.selectedTitle = action.selectedTitle;
+    cell.actionButton.enabled = action.isEnabled;
     return cell;
 }
 

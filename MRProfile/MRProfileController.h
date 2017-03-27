@@ -52,6 +52,7 @@
 */
 
 #import <UIKit/UIKit.h>
+#import "MRProfileActionCollectionViewCell.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -84,6 +85,7 @@ NS_CLASS_AVAILABLE_IOS(8_0) @interface MRProfileAction : NSObject <NSCopying>
 
 @property (nullable, nonatomic, readonly) NSString *title;
 @property (nullable, nonatomic, readonly) NSString *selectedTitle;
+@property (weak, nonatomic) MRProfileActionCollectionViewCell *cell;
 @property (nonatomic, getter=isEnabled) BOOL enabled;
 @property (nonatomic, getter=isSelected) BOOL selected;
 
@@ -118,7 +120,7 @@ NS_CLASS_AVAILABLE_IOS(8_0) @interface MRProfileReport : NSObject <NSCopying>
 
 NS_CLASS_AVAILABLE_IOS(8_0) @interface MRProfileController : UIViewController
 
-+ (instancetype)profileWithName:(nullable NSString *)name userID:(nullable NSString *)userID image:(nullable id)image preferredStyle:(MRProfileControllerStyle)preferredStyle;
++ (instancetype)profileWithName:(nullable NSString *)name userID:(nullable NSString *)userID image:(nullable id)image preferredStyle:(MRProfileControllerStyle)preferredStyle dismissHandler:(void(^ __nullable)(BOOL isDismissedWithAction))dismissHander;
 
 - (void)addAction:(MRProfileAction *)action;
 @property (nonatomic, readonly) NSArray<MRProfileAction *> *actions;

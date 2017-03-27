@@ -11,8 +11,6 @@
 
 @interface MRProfileActionCollectionViewCell()
 
-@property (assign, nonatomic) BOOL isActionButtonSelected;
-
 @end
 
 @implementation MRProfileActionCollectionViewCell
@@ -20,7 +18,6 @@
 - (void)awakeFromNib {
     
     [super awakeFromNib];
-    self.isActionButtonSelected = NO;
     self.activityIndicatorView.hidden = true;
     [self.activityIndicatorView hidesWhenStopped];
     [self.activityIndicatorView stopAnimating];
@@ -28,6 +25,7 @@
     [self.actionButton setBackgroundImage:[[UIImage imageNamed:@"bt_new_normal"]resizableImageWithCapInsets:UIEdgeInsetsMake(0.0, 20.0f, 0.0, 20.0f) resizingMode:UIImageResizingModeStretch] forState:UIControlStateNormal];
     [self.actionButton setBackgroundImage:[[UIImage imageNamed:@"bt_new_pressed"]resizableImageWithCapInsets:UIEdgeInsetsMake(0.0, 20.0f, 0.0, 20.0f) resizingMode:UIImageResizingModeStretch] forState:UIControlStateHighlighted];
     [self.actionButton setTitleColor:[UIColor colorWithHexString: @"#ffffff"] forState:UIControlStateNormal];
+    [self.actionButton setTitle:@"" forState:UIControlStateHighlighted];
     self.actionButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:14];
 }
 
@@ -41,42 +39,45 @@
     [self.actionButton setTitle:selectedTitle forState:UIControlStateSelected];
 }
 
-- (void)updateActionButton {
+- (void)updateActionButton:(BOOL)selected {
     
-    if (self.isActionButtonSelected) {
+    if (selected) {
         
-        [self normalActionButton];
+        [self selectedActionButton];
     }
     else {
         
-        [self selectedActionButton];
+        [self normalActionButton];
     }
 }
 
 - (void)selectedActionButton {
     
-    self.isActionButtonSelected = YES;
     self.actionButton.selected = YES;
     self.actionButton.enabled = YES;
+    self.actionButton.hidden = NO;
     [self.activityIndicatorView stopAnimating];
+    self.activityIndicatorView.hidden = YES;
 }
 
 - (void)normalActionButton {
     
-    self.isActionButtonSelected = NO;
     self.actionButton.selected = NO;
     self.actionButton.enabled = YES;
+    self.actionButton.hidden = NO;
     [self.activityIndicatorView stopAnimating];
+    self.activityIndicatorView.hidden = YES;
 }
 
 - (IBAction)actionButtonDidTapped:(UIButton *)sender {
     
+    self.activityIndicatorView.hidden = NO;
+    [self.activityIndicatorView startAnimating];
+    sender.enabled = NO;
+    sender.hidden = YES;
     if (self.actionSelectHandler) {
-        self.activityIndicatorView.hidden = false;
-        [self.activityIndicatorView startAnimating];
-        sender.enabled = NO;
-        __weak typeof(self) weak = self;
-        self.actionSelectHandler(weak);
+        
+        self.actionSelectHandler(self);
     }
 }
 
@@ -86,6 +87,5 @@
     self.title = nil;
     self.actionSelectHandler = nil;
 }
-
 
 @end

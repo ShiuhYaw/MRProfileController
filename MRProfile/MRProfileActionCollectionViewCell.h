@@ -19,6 +19,6 @@ typedef void  (^ActionSelectHandler)(UICollectionViewCell *cell);
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *buttonWidth;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *lowButtonWidth;
 @property (nonatomic, copy) ActionSelectHandler actionSelectHandler;
-- (void)updateActionButton;
+- (void)updateActionButton:(BOOL)selected;
 
 @end
