@@ -126,7 +126,7 @@ typedef void (^Handler)(MRProfileAction *action);
 
 @interface MRProfileTitle()
 
-@property (strong, nonatomic) UIImage *titleImage;
+@property (strong, nonatomic) id titleImage;
 @property (strong, nonatomic) NSString *titleString;
 @property (assign, nonatomic) MRProfileTitleStyle preferredStyle;
 
@@ -134,7 +134,7 @@ typedef void (^Handler)(MRProfileAction *action);
 
 @implementation MRProfileTitle
 
-+ (instancetype)profileWithTitle:(NSString *)title titleImage:(UIImage *)titleImg preferredStyle:(MRProfileTitleStyle)preferredStyle {
++ (instancetype)profileWithTitle:(NSString *)title titleImage:(id)titleImg preferredStyle:(MRProfileTitleStyle)preferredStyle {
 
     MRProfileTitle *profileTitle = [[MRProfileTitle alloc]init];
     profileTitle.titleImage = titleImg;
@@ -152,7 +152,7 @@ typedef void (^Handler)(MRProfileAction *action);
     return profileTitle;
 }
 
-- (UIImage *)image {
+- (id)image {
     
     return self.titleImage;
 }
@@ -228,6 +228,8 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 
 @property (weak, nonatomic) IBOutlet UIView *userProfileView;
 @property (weak, nonatomic) IBOutlet UIImageView *userProfileImageView;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *userProfileActivityIndicatorView;
+
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *userProfileTop;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *userProfileCenterX;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *userProfileWidth;
@@ -311,7 +313,7 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 #pragma mark - User Action View
 
 @property (weak, nonatomic) IBOutlet UIView *userActionView;
-@property (weak, nonatomic) IBOutlet id userProfileImg;
+@property (strong, nonatomic) IBOutlet id userProfileImg;
 
 @property (weak, nonatomic) IBOutlet UIButton *userFollowButton;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *userActionHeight;
@@ -486,7 +488,8 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
     [self configureWithStyle:self.preferredStyle];
     self.userNameLabel.text = self.name;
     self.userIDLabel.text = [NSString stringWithFormat:@"User ID: %@", self.userID];
-    
+    self.userProfileActivityIndicatorView.hidesWhenStopped = YES;
+    [self.userProfileActivityIndicatorView startAnimating];
     [[self.userProfileView layer]setCornerRadius:self.userProfileView.bounds.size.height/2];
     [[self.userProfileImageView layer]setCornerRadius:self.userProfileImageView.bounds.size.height/2];
     [[self.firstSeparateView layer]setCornerRadius:self.firstSeparateView.bounds.size.height/2];
@@ -627,6 +630,7 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
     }
     
     if ([self.userProfileImage isKindOfClass:[UIImage class]]) {
+        [self.userProfileActivityIndicatorView stopAnimating];
         self.userProfileImageView.image = self.userProfileImage;
         [self.userProfileImageView reloadInputViews];
 
@@ -638,6 +642,7 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
                 [thumbnail setImage:image];
                 self.userProfileImageView.image = image;
                 [self.userProfileImageView reloadInputViews];
+                [self.userProfileActivityIndicatorView stopAnimating];
             }
         }];
     }
@@ -648,10 +653,12 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
                 [thumbnail setImage:image];
                 self.userProfileImageView.image = image;
                 [self.userProfileImageView reloadInputViews];
+                [self.userProfileActivityIndicatorView stopAnimating];
             }
         }];
     }
     if ([self.userProfileImage isKindOfClass:[NSData class]]) {
+        [self.userProfileActivityIndicatorView stopAnimating];
         self.userProfileImageView.image   = [UIImage imageWithData:self.userProfileImage];
     }
 }
@@ -734,7 +741,7 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
     
     if ([collectionView isEqual:self.titleCollectionView]) {
         MRProfileTitleCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:NSStringFromClass([MRProfileTitleCollectionViewCell class]) forIndexPath:indexPath];
-        cell.imageView.image = self.mutableTitles[indexPath.row].image;
+        cell.image = self.mutableTitles[indexPath.row].image;
         return cell;
     }
     
@@ -844,6 +851,9 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
     }
     if (self.currentReport) {
         self.currentReport = nil;
+    }
+    if (self.userProfileImg) {
+        self.userProfileImg = nil;
     }
 }
 

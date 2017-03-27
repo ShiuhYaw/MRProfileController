@@ -46,6 +46,7 @@
                 <outlet property="userIDView" destination="bgB-qe-CiD" id="Vbp-ur-sOv"/>
                 <outlet property="userNameLabel" destination="dr8-AX-OSK" id="kGh-cv-KX2"/>
                 <outlet property="userNameLeading" destination="Lhs-yM-RXS" id="dlJ-pu-IqN"/>
+                <outlet property="userProfileActivityIndicatorView" destination="Jwg-rf-qjS" id="uWj-4Q-g2n"/>
                 <outlet property="userProfileCardBottom" destination="Iin-MO-qSa" id="bEV-zH-Auf"/>
                 <outlet property="userProfileCardCenterY" destination="BFD-v6-yTp" id="r4Z-4Q-ZI4"/>
                 <outlet property="userProfileCardLeadingWhileCenterYDisable" destination="FGs-vn-vWQ" id="YmO-zb-an2"/>
@@ -491,15 +492,20 @@
                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="vDK-gH-eeT">
                             <rect key="frame" x="2" y="2" width="78" height="78"/>
                         </imageView>
+                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Jwg-rf-qjS">
+                            <rect key="frame" x="31" y="31" width="20" height="20"/>
+                        </activityIndicatorView>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="82" id="2V4-oX-ZHL"/>
+                        <constraint firstItem="Jwg-rf-qjS" firstAttribute="centerX" secondItem="hgF-Ry-rpd" secondAttribute="centerX" id="CBe-t0-72o"/>
                         <constraint firstAttribute="bottom" secondItem="vDK-gH-eeT" secondAttribute="bottom" constant="2" id="XFG-tE-UPM"/>
                         <constraint firstAttribute="height" constant="82" id="XQh-Ok-c2b"/>
                         <constraint firstItem="vDK-gH-eeT" firstAttribute="leading" secondItem="hgF-Ry-rpd" secondAttribute="leading" constant="2" id="dCI-vM-OTX"/>
                         <constraint firstAttribute="trailing" secondItem="vDK-gH-eeT" secondAttribute="trailing" constant="2" id="g6N-KS-Y9A"/>
                         <constraint firstItem="vDK-gH-eeT" firstAttribute="top" secondItem="hgF-Ry-rpd" secondAttribute="top" constant="2" id="kpE-mr-mKm"/>
+                        <constraint firstItem="Jwg-rf-qjS" firstAttribute="centerY" secondItem="hgF-Ry-rpd" secondAttribute="centerY" id="toh-GA-6eM"/>
                     </constraints>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">

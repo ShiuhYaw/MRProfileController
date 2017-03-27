@@ -51,10 +51,10 @@
     MRProfileFollow *following = [MRProfileFollow followWithValue:@"103" title:@"Following" preferredStyle:MRProfileFollowStyleFollowing];
     [profileController addFollow:following];
     
-    MRProfileTitle *title = [MRProfileTitle profileWithTitle:@"" titleImage:[UIImage imageNamed:@"fresh"] preferredStyle:MRProfileTitleStyleBroadcaster];
+    MRProfileTitle *title = [MRProfileTitle profileWithTitle:@"" titleImage: [NSURL URLWithString:@"https://cdn3.iconfinder.com/data/icons/business-3-2/256/Award-512.png"] preferredStyle:MRProfileTitleStyleBroadcaster];
     [profileController addTitle:title];
     
-    MRProfileTitle *viewweTitle = [MRProfileTitle profileWithTitle:@"" titleImage:[UIImage imageNamed:@"Newbie"] preferredStyle:MRProfileTitleStyleViewer];
+    MRProfileTitle *viewweTitle = [MRProfileTitle profileWithTitle:@"" titleImage:[NSURL URLWithString:@"https://cdn3.iconfinder.com/data/icons/business-3-2/256/Award-512.png"] preferredStyle:MRProfileTitleStyleViewer];
     [profileController addTitle:viewweTitle];
 
     [profileController addDiamondWithConfigurationHandler:^(UILabel * _Nonnull label) {

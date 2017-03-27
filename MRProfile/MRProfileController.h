@@ -53,9 +53,9 @@ NS_CLASS_AVAILABLE_IOS(8_0) @interface MRProfileFollow : NSObject <NSCopying>
 
 NS_CLASS_AVAILABLE_IOS(8_0) @interface MRProfileTitle : NSObject <NSCopying>
 
-+ (instancetype)profileWithTitle:(NSString *)title titleImage:(UIImage *)titleImg preferredStyle:(MRProfileTitleStyle)preferredStyle;
++ (instancetype)profileWithTitle:(NSString *)title titleImage:(id)titleImg preferredStyle:(MRProfileTitleStyle)preferredStyle;
 
-@property (nullable, nonatomic, readonly) UIImage *image;
+@property (nullable, nonatomic, readonly) id image;
 @property (nullable, nonatomic, readonly) NSString *title;
 @property (nonatomic, readonly) MRProfileTitleStyle style;
 @end

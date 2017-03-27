@@ -10,5 +10,6 @@
 
 @interface MRProfileTitleCollectionViewCell : UICollectionViewCell
 
-@property (weak, nonatomic) IBOutlet UIImageView *imageView;
+@property (strong, nonatomic) id image;
+
 @end

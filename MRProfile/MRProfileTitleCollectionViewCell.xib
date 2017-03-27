@@ -18,25 +18,28 @@
                 <rect key="frame" x="0.0" y="0.0" width="66" height="42"/>
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="fresh" translatesAutoresizingMaskIntoConstraints="NO" id="Svi-38-Sp9">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Svi-38-Sp9">
                         <rect key="frame" x="7.5" y="0.0" width="51" height="42"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </imageView>
+                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="grs-dW-tFX">
+                        <rect key="frame" x="23" y="11" width="20" height="20"/>
+                    </activityIndicatorView>
                 </subviews>
             </view>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
             <constraints>
+                <constraint firstItem="grs-dW-tFX" firstAttribute="centerY" secondItem="gTV-IL-0wX" secondAttribute="centerY" id="PAt-Nl-d79"/>
                 <constraint firstAttribute="bottom" secondItem="Svi-38-Sp9" secondAttribute="bottom" id="W7m-7G-AH9"/>
+                <constraint firstItem="grs-dW-tFX" firstAttribute="centerX" secondItem="gTV-IL-0wX" secondAttribute="centerX" id="YnG-W5-2hi"/>
                 <constraint firstItem="Svi-38-Sp9" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="eNZ-D7-37V"/>
                 <constraint firstAttribute="trailing" secondItem="Svi-38-Sp9" secondAttribute="trailing" constant="7.5" id="gWl-Qb-YpH"/>
                 <constraint firstItem="Svi-38-Sp9" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="7.5" id="scv-hQ-d6T"/>
             </constraints>
             <connections>
+                <outlet property="activityIndicatorView" destination="grs-dW-tFX" id="5kW-SH-dIg"/>
                 <outlet property="imageView" destination="Svi-38-Sp9" id="jNq-VB-Ega"/>
             </connections>
         </collectionViewCell>
     </objects>
-    <resources>
-        <image name="fresh" width="50" height="32"/>
-    </resources>
 </document>
