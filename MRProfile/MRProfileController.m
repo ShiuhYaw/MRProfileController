@@ -633,20 +633,16 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
     }
     if ([self.userProfileImage isKindOfClass:[NSString class]]) {
         __weak typeof(self) weak = self;
-        [[[UIImageView alloc] init] sd_setImageWithURL:[NSURL URLWithString:self.userProfileImage] placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
+        [self.userProfileImageView sd_setImageWithURL:[NSURL URLWithString:self.userProfileImage] placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
             if(image){
-                weak.userProfileImageView.image = image;
-                [weak.userProfileImageView reloadInputViews];
                 [weak.userProfileActivityIndicatorView stopAnimating];
             }
         }];
     }
     if ([self.userProfileImage isKindOfClass:[NSURL class]]) {
         __weak typeof(self) weak = self;
-        [[[UIImageView alloc] init] sd_setImageWithURL:self.userProfileImage placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
+        [self.userProfileImageView sd_setImageWithURL:self.userProfileImage placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
             if(image){
-                weak.userProfileImageView.image = image;
-                [weak.userProfileImageView reloadInputViews];
                 [weak.userProfileActivityIndicatorView stopAnimating];
             }
         }];
@@ -660,6 +656,7 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 - (void)viewDidDisappear:(BOOL)animated {
     
     [super viewDidDisappear:animated];
+    [[SDImageCache sharedImageCache]clearMemory];
 }
 
 - (IBAction)reportButtonDidTapped:(UIButton *)sender {
@@ -849,7 +846,7 @@ typedef void (^CertConfigurationHandler)(UIImageView *vipImage);
 - (void)didReceiveMemoryWarning {
     
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    [[SDImageCache sharedImageCache]clearMemory];
 }
 
 @end

@@ -75,8 +75,4 @@
     }];
 }
 
-- (IBAction)relese:(id)sender {
-    
-}
-
 @end

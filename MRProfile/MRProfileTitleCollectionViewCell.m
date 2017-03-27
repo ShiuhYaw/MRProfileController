@@ -43,10 +43,8 @@
     if ([image isKindOfClass:[NSString class]]) {
         
         __weak typeof(self) weak = self;
-        [[[UIImageView alloc] init] sd_setImageWithURL:[NSURL URLWithString:image] placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
+        [self.imageView sd_setImageWithURL:[NSURL URLWithString:image] placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
             if(image){
-                weak.imageView.image = image;
-                [weak.imageView reloadInputViews];
                 [weak.activityIndicatorView stopAnimating];
             }
         }];
@@ -55,10 +53,8 @@
     if ([image isKindOfClass:[NSURL class]]) {
         
         __weak typeof(self) weak = self;
-        [[[UIImageView alloc] init] sd_setImageWithURL:image placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
+        [self.imageView sd_setImageWithURL:image placeholderImage:nil options:SDWebImageProgressiveDownload completed:^(UIImage * image, NSError * error,SDImageCacheType cachedType, NSURL * imageURL){
             if(image){
-                weak.imageView.image = image;
-                [weak.imageView reloadInputViews];
                 [weak.activityIndicatorView stopAnimating];
             }
         }];
