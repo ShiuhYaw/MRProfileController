@@ -31,7 +31,11 @@
 
 - (IBAction)touchMeDidTapped:(UIButton *)sender {
     
-    MRProfileController *profileController = [MRProfileController profileWithName:@"Shiuh yaw" userID:@"1001010" image:[NSURL URLWithString:@"https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/male/86.png"] preferredStyle:MRProfileControllerStyleBottom dismissHandler:nil];
+    __weak typeof(self)weakSelf = self;
+    MRProfileController *profileController = [MRProfileController profileWithName:@"Shiuh yaw" userID:@"1001010" image:[NSURL URLWithString:@"https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/male/86.png"] preferredStyle:MRProfileControllerStyleBottom dismissHandler:^(BOOL isDismissedWithAction) {
+        NSLog(@"isDismissedWithAction %@", isDismissedWithAction ? @"YES" : @"NO");
+        [weakSelf touchMeDidTapped:sender];
+    }];
 
     MRProfileAction *okAction = [MRProfileAction actionWithTitle:@"Follow" selectedTitle:@"Following" handler:^(MRProfileAction * _Nonnull action) {
         
@@ -42,6 +46,15 @@
             action.selected = YES;
             NSLog(@"action: %@", @(action.isSelected));
         });
+        
+        delayInSeconds = 5.0;
+        popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            //code to be executed on the main queue after delay
+            action.selected = NO;
+            NSLog(@"action: %@", @(action.isSelected));
+        });
+
     }];
     [profileController addAction:okAction];
 

@@ -32,14 +32,13 @@ typedef void (^Handler)(MRProfileAction *action);
     MRProfileAction *profileAction = [[MRProfileAction alloc] init];
     profileAction.titleString = title;
     profileAction.selectedTitleString = selectedTitle;
-    profileAction.enabled = YES;
     profileAction.handler = handler;
     return profileAction;
 }
 
 - (BOOL)isEnabled {
     
-    if (self.cell) {
+    if (!self.cell) {
         return NO;
     }
     return self.cell.actionButton.isEnabled;
@@ -47,7 +46,7 @@ typedef void (^Handler)(MRProfileAction *action);
 
 - (BOOL)isSelected {
     
-    if (self.cell) {
+    if (!self.cell) {
         return NO;
     }
     return self.cell.actionButton.selected;
@@ -55,7 +54,7 @@ typedef void (^Handler)(MRProfileAction *action);
 
 - (void)setSelected:(BOOL)selected {
     
-    if (self.cell) {
+    if (!self.cell) {
         return;
     }
     [self.cell updateActionButton:selected];
@@ -687,12 +686,11 @@ typedef void (^DismissHandler)(BOOL isDismissedWithAction);
 - (IBAction)dismissButtonDidTapped:(UIButton *)sender {
     
     self.dismissed = YES;
-    if (self.dismissHandler) {
-        self.dismissHandler(NO);
-    }
+    __weak typeof(self)weakSelf = self;
     [self dismissViewControllerAnimated:true completion:^{
-        
-        NSLog(@"dismissed");
+        if (weakSelf.dismissHandler) {
+            weakSelf.dismissHandler(NO);
+        }
     }];
 }
 #pragma mark - UICollectionViewDelegate
@@ -760,7 +758,6 @@ typedef void (^DismissHandler)(BOOL isDismissedWithAction);
     cell.tag = indexPath.row;
     cell.title = action.title;
     cell.selectedTitle = action.selectedTitle;
-    cell.actionButton.enabled = action.isEnabled;
     return cell;
 }
 

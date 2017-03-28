@@ -19,7 +19,6 @@
     
     [super awakeFromNib];
     self.activityIndicatorView.hidden = true;
-    [self.activityIndicatorView hidesWhenStopped];
     [self.activityIndicatorView stopAnimating];
     [self.actionButton setBackgroundImage:[[UIImage imageNamed:@"bt_new_m_focus"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0, 20.0f, 0.0, 20.0f) resizingMode:UIImageResizingModeStretch] forState:UIControlStateSelected];
     [self.actionButton setBackgroundImage:[[UIImage imageNamed:@"bt_new_normal"]resizableImageWithCapInsets:UIEdgeInsetsMake(0.0, 20.0f, 0.0, 20.0f) resizingMode:UIImageResizingModeStretch] forState:UIControlStateNormal];
