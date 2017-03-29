@@ -564,6 +564,13 @@ typedef void (^DismissHandler)(BOOL isDismissedWithAction);
         isCertAvailable = YES;
     }
     if (!isDiamondAvailable && !isVIPAvailable && !isGoldCertAvailable && !isCertAvailable) {
+        self.userDiamondWidth.constant = 0;
+        self.userVIPStatusWidth.constant = 0;
+        self.userVIPStatusLeading.constant = 0;
+        self.userGoldCertWidth.constant = 0;
+        self.userGoldCertLeading.constant = 0;
+        self.userCertWidth.constant = 0;
+        self.userCertLeading.constant = 0;
         self.userNameLeading.constant = 0;
     }
     
@@ -693,6 +700,27 @@ typedef void (^DismissHandler)(BOOL isDismissedWithAction);
         }
     }];
 }
+
+- (void)incrementProfileFollowing:(BOOL)increment {
+
+    for (MRProfileFollow *follow in self.mutableFollows) {
+        
+        switch (follow.style) {
+            case MRProfileFollowStyleFollowing:
+                if (increment) {
+                    follow.valueString = @([follow.valueString integerValue] + 1).stringValue;
+                }
+                else {
+                    follow.valueString = @([follow.valueString integerValue] - 1).stringValue;
+                }
+                self.userFollowingLabel.text = follow.value;
+                break;
+            default:
+                break;
+        }
+    }
+}
+
 #pragma mark - UICollectionViewDelegate
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {

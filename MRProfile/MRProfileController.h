@@ -138,6 +138,7 @@ NS_CLASS_AVAILABLE_IOS(8_0) @interface MRProfileController : UIViewController
 - (void)addVIPWithConfigurationHandler:(void (^ __nullable)(UIImageView *imageView))vipHandler;
 - (void)addGoldCertWithConfigurationHandler:(void (^ __nullable)(UIImageView *imageView))goldCertHandler;
 - (void)addCertWithConfigurationHandler:(void (^ __nullable)(UIImageView *imageView))certHandler;
+- (void)incrementProfileFollowing:(BOOL)increment;
 
 @property (nullable, nonatomic, copy) NSString *name;
 @property (nullable, nonatomic, copy) NSString *userID;
